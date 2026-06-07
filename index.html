@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Shadowverse Token Counter β</title>
+<title>Shadowverse Nightmare Token Counter β</title>
 
 <style>
 
@@ -13,24 +13,32 @@ body{
     font-family:sans-serif;
     text-align:center;
     margin:20px;
-    max-width:600px;
+    max-width:700px;
     margin-left:auto;
     margin-right:auto;
 }
 
-h1{
-    margin-bottom:30px;
+.token-card{
+    border:1px solid #ccc;
+    border-radius:10px;
+    padding:15px;
+    margin:15px 0;
 }
 
-select{
-    font-size:18px;
-    padding:10px;
-    width:250px;
-}
-
-#currentOpponent{
+.count{
+    font-size:32px;
     font-weight:bold;
-    font-size:24px;
+    margin:10px;
+}
+
+button{
+    font-size:20px;
+    padding:10px 20px;
+    margin:5px;
+}
+
+.reset{
+    margin-top:30px;
 }
 
 </style>
@@ -41,66 +49,117 @@ select{
 
 <h1>Shadowverse Token Counter β</h1>
 
-<h2>対面クラス選択</h2>
+<h2>ナイトメア</h2>
 
-<select id="opponentClass" onchange="saveOpponentClass()">
+<div id="tokens"></div>
 
-```
-<option value="">選択してください</option>
-
-<option value="エルフ">エルフ</option>
-<option value="ロイヤル">ロイヤル</option>
-<option value="ウィッチ">ウィッチ</option>
-<option value="ドラゴン">ドラゴン</option>
-<option value="ナイトメア">ナイトメア</option>
-<option value="ビショップ">ビショップ</option>
-<option value="ネメシス">ネメシス</option>
-```
-
-</select>
-
-<p>
-現在の対面：
-<span id="currentOpponent">未選択</span>
-</p>
+<button class="reset" onclick="resetAll()">
+全リセット
+</button>
 
 <script>
 
-function saveOpponentClass(){
+const tokenNames = [
+    "ゴースト",
+    "バット",
+    "スケルトン",
+    "腐臭のゾンビ"
+];
 
-    let selected =
-        document.getElementById("opponentClass").value;
+let tokenCounts =
+    JSON.parse(
+        localStorage.getItem("tokenCounts")
+    ) || {};
 
-    document.getElementById("currentOpponent")
-        .textContent =
-        selected || "未選択";
+function saveData(){
 
     localStorage.setItem(
-        "opponentClass",
-        selected
+        "tokenCounts",
+        JSON.stringify(tokenCounts)
     );
 }
 
-function loadOpponentClass(){
+function updateDisplay(name){
 
-    let saved =
-        localStorage.getItem(
-            "opponentClass"
-        );
+    document.getElementById(
+        "count-" + name
+    ).textContent =
+        tokenCounts[name];
+}
 
-    if(saved){
+function increase(name){
 
-        document.getElementById(
-            "opponentClass"
-        ).value = saved;
+    tokenCounts[name]++;
 
-        document.getElementById(
-            "currentOpponent"
-        ).textContent = saved;
+    updateDisplay(name);
+
+    saveData();
+}
+
+function decrease(name){
+
+    if(tokenCounts[name] > 0){
+
+        tokenCounts[name]--;
+
+        updateDisplay(name);
+
+        saveData();
     }
 }
 
-loadOpponentClass();
+function createTokenCard(name){
+
+    if(tokenCounts[name] == null){
+
+        tokenCounts[name] = 0;
+    }
+
+    let html = `
+        <div class="token-card">
+
+            <h3>${name}</h3>
+
+            <button onclick="decrease('${name}')">
+                -
+            </button>
+
+            <span
+                class="count"
+                id="count-${name}">
+                ${tokenCounts[name]}
+            </span>
+
+            <button onclick="increase('${name}')">
+                +
+            </button>
+
+        </div>
+    `;
+
+    document.getElementById("tokens")
+        .insertAdjacentHTML(
+            "beforeend",
+            html
+        );
+}
+
+function resetAll(){
+
+    tokenNames.forEach(name => {
+
+        tokenCounts[name] = 0;
+
+        updateDisplay(name);
+
+    });
+
+    saveData();
+}
+
+tokenNames.forEach(createTokenCard);
+
+saveData();
 
 </script>
 
