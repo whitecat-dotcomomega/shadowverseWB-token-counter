@@ -51,6 +51,10 @@ button{
 
 <h2>ナイトメア</h2>
 
+<h3>カード効果</h3>
+<button onclick="useCard('カースパーティー')">
+カースパーティー
+</button>
 <div id="tokens"></div>
 
 <button class="reset" onclick="resetAll()">
@@ -65,7 +69,15 @@ const tokenNames = [
     "スケルトン",
     "腐臭のゾンビ"
 ];
-
+    
+const cards = {
+    "カースパーティー": {
+        "ゴースト": 1,
+        "スケルトン": 1,
+        "腐臭のゾンビ": 1
+    }
+};
+    
 let tokenCounts =
     JSON.parse(
         localStorage.getItem("tokenCounts")
@@ -161,6 +173,20 @@ tokenNames.forEach(createTokenCard);
 
 saveData();
 
+function useCard(cardName){
+
+    let effects = cards[cardName];
+
+    for(let token in effects){
+
+        tokenCounts[token] += effects[token];
+
+        updateDisplay(token);
+    }
+
+    saveData();
+}
+    
 </script>
 
 </body>
