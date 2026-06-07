@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Shadowverse Token Counter β</title>
+
+<style>
+
+body{
+    font-family:sans-serif;
+    text-align:center;
+    margin:20px;
+    max-width:600px;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+h1{
+    margin-bottom:30px;
+}
+
+select{
+    font-size:18px;
+    padding:10px;
+    width:250px;
+}
+
+#currentOpponent{
+    font-weight:bold;
+    font-size:24px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>Shadowverse Token Counter β</h1>
+
+<h2>対面クラス選択</h2>
+
+<select id="opponentClass" onchange="saveOpponentClass()">
+
+```
+<option value="">選択してください</option>
+
+<option value="エルフ">エルフ</option>
+<option value="ロイヤル">ロイヤル</option>
+<option value="ウィッチ">ウィッチ</option>
+<option value="ドラゴン">ドラゴン</option>
+<option value="ナイトメア">ナイトメア</option>
+<option value="ビショップ">ビショップ</option>
+<option value="ネメシス">ネメシス</option>
+```
+
+</select>
+
+<p>
+現在の対面：
+<span id="currentOpponent">未選択</span>
+</p>
+
+<script>
+
+function saveOpponentClass(){
+
+    let selected =
+        document.getElementById("opponentClass").value;
+
+    document.getElementById("currentOpponent")
+        .textContent =
+        selected || "未選択";
+
+    localStorage.setItem(
+        "opponentClass",
+        selected
+    );
+}
+
+function loadOpponentClass(){
+
+    let saved =
+        localStorage.getItem(
+            "opponentClass"
+        );
+
+    if(saved){
+
+        document.getElementById(
+            "opponentClass"
+        ).value = saved;
+
+        document.getElementById(
+            "currentOpponent"
+        ).textContent = saved;
+    }
+}
+
+loadOpponentClass();
+
+</script>
+
+</body>
+</html>
